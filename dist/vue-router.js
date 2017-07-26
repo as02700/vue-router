@@ -2577,8 +2577,10 @@
             ready: function ready() {
               if (router._beforeStartRoutes.length) {
                 var next = router._beforeStartRoutes.shift();
-                console.log('///ready - next', next);
-                window.location.hash = next;
+                setTimeout(function() {
+                  console.warn('///ready - next', next);
+                  window.location.hash = next;
+                }, 10);
               }
             },
             _meta: {
