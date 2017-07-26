@@ -2164,9 +2164,7 @@
 
       this._beforeStartRoutes = [].concat(beforeStart && beforeStart(window.location.hash)).filter(Boolean);
       if (this._beforeStartRoutes.length) {
-        console.warn('/////has beforeStart', this._beforeStartRoutes);
-        var first = this._beforeStartRoutes.shift();
-        window.location.hash = first;
+        window.location.hash = this._beforeStartRoutes.shift();
       }
 
       var History = historyBackends[this.mode];
@@ -2576,11 +2574,16 @@
             },
             ready: function ready() {
               if (router._beforeStartRoutes.length) {
-                var next = router._beforeStartRoutes.shift();
-                setTimeout(function() {
-                  console.warn('///ready - next', next);
-                  window.location.hash = next;
-                }, 10);
+                var toNext = (function(){
+                  window.location.hash = this._beforeStartRoutes.shift();
+                }).bind(router);
+                if (window.document.readyState == 'complete') {
+                  toNext();
+                } else {
+                  window.addEventListener('load', function(){
+                    setTimeout(toNext, 0);
+                  });
+                }
               }
             },
             _meta: {

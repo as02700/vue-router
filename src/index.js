@@ -34,7 +34,8 @@ class Router {
     transitionOnLoad = false,
     suppressTransitionError = false,
     root = null,
-    linkActiveClass = 'v-link-active'
+    linkActiveClass = 'v-link-active',
+    beforeStart = null
   } = {}) {
 
     /* istanbul ignore if */
@@ -89,6 +90,11 @@ class Router {
         ? 'html5'
         : 'hash'
 
+    this._beforeStartRoutes = [].concat(beforeStart && beforeStart(window.location.hash)).filter(Boolean)
+    if (this._beforeStartRoutes.length) {
+      window.location.hash = this._beforeStartRoutes.shift()
+    }
+    
     const History = historyBackends[this.mode]
     this.history = new History({
       root: root,
@@ -505,6 +511,20 @@ class Router {
         el: this._appContainer,
         created () {
           this.$router = router
+        },
+        ready: function ready() {
+          if (router._beforeStartRoutes.length) {
+            var toNext = (function(){
+              window.location.hash = this._beforeStartRoutes.shift()
+            }).bind(router)
+            if (window.document.readyState == 'complete') {
+              toNext()
+            } else {
+              window.addEventListener('load', function(){
+                setTimeout(toNext, 0)
+              })
+            }
+          }
         },
         _meta: {
           $route: route
