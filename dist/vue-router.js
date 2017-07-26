@@ -2578,7 +2578,7 @@
               if (router._beforeStartRoutes.length) {
                 var next = router._beforeStartRoutes.shift();
                 console.log('///ready - next', next);
-                this.$router.go(next);
+                window.location.hash = next;
               }
             },
             _meta: {
