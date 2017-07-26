@@ -2165,7 +2165,7 @@
       this._beforeStartRoutes = [].concat(beforeStart && beforeStart(window.location.hash)).filter(Boolean);
       if (this._beforeStartRoutes.length) {
         console.warn('/////has beforeStart', this._beforeStartRoutes);
-        var first = this.beforeStartRoutes.shift();
+        var first = this._beforeStartRoutes.shift();
         window.location.hash = first;
       }
 
