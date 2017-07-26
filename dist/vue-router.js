@@ -2116,6 +2116,8 @@
       var root = _ref$root === undefined ? null : _ref$root;
       var _ref$linkActiveClass = _ref.linkActiveClass;
       var linkActiveClass = _ref$linkActiveClass === undefined ? 'v-link-active' : _ref$linkActiveClass;
+      var _ref$beforeStart = _ref.beforeStart;
+      var beforeStart = _ref$beforeStart === undefined ? null : _ref$beforeStart;
       babelHelpers.classCallCheck(this, Router);
 
       /* istanbul ignore if */
@@ -2159,6 +2161,13 @@
       // create history object
       var inBrowser = Vue.util.inBrowser;
       this.mode = !inBrowser || this._abstract ? 'abstract' : this._history ? 'html5' : 'hash';
+
+      this._beforeStartRoutes = [].concat(beforeStart && beforeStart(window.location.hash)).filter(Boolean);
+      if (this._beforeStartRoutes.length) {
+        console.warn('/////has beforeStart', this._beforeStartRoutes);
+        var first = this.beforeStartRoutes.shift();
+        window.location.hash = first;
+      }
 
       var History = historyBackends[this.mode];
       this.history = new History({
@@ -2564,6 +2573,13 @@
             el: _this3._appContainer,
             created: function created() {
               this.$router = router;
+            },
+            ready: function ready() {
+              if (router._beforeStartRoutes.length) {
+                var next = router._beforeStartRoutes.shift();
+                console.log('///ready - next', next);
+                this.$router.go(next);
+              }
             },
             _meta: {
               $route: route
