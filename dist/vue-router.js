@@ -2143,6 +2143,7 @@
       this._notFoundRedirect = null;
       this._beforeEachHooks = [];
       this._afterEachHooks = [];
+      this._beforeGobackHooks = [];
 
       // trigger transition on initial render?
       this._rendered = false;
@@ -2273,6 +2274,25 @@
       this._afterEachHooks.push(fn);
       return this;
     };
+    
+    Router.prototype.beforeGoback = function beforeGoback(fn) {
+      this._beforeGobackHooks.push(fn);
+      return this;
+    };
+    
+    Router.prototype.goback = function goback() {
+      if (this.mode == 'abstract') {
+        console.warn("can't not execute goback on 'abstract' mode")
+      } else {
+        this._beforeGobackHooks.forEach(
+          function(fn) {
+            fn(this._currentTransition)
+          },
+          this
+        )
+        window.history.back()
+      }
+    };    
 
     /**
      * Navigate to a given path.
