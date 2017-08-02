@@ -64,7 +64,6 @@ class Router {
     this._notFoundRedirect = null
     this._beforeEachHooks = []
     this._afterEachHooks = []
-    this._beforeGobackHooks = []
 
     // trigger transition on initial render?
     this._rendered = false
@@ -193,31 +192,6 @@ class Router {
   afterEach (fn) {
     this._afterEachHooks.push(fn)
     return this
-  }
-  
-  /**
-   * Set global before goback hook.
-   *
-   * @param {Function} fn
-   */
-   
-  beforeGoback (fn) {
-    this._beforeGobackHooks.push(fn)
-    return this
-  }
-  
-  goback () {
-    if (this.mode == 'abstract') {
-      console.warn("can't not execute goback on 'abstract' mode")
-    } else {
-      this._beforeGobackHooks.forEach(
-        function(fn) {
-          fn(this._currentTransition)
-        },
-        this
-      )
-      window.history.back()
-    }
   }
 
   /**
